@@ -25,11 +25,6 @@ public class CameraController : MonoBehaviour {
 		float targetX = Mathf.LerpUnclamped (previousPosition.x, currentPosition.x, acceleration);
 		float targetY = Mathf.LerpUnclamped (previousPosition.y, currentPosition.y, acceleration);
 
-		//Vector3 extrapolatedTarget = 
-
-		//float distance = ((Vector2) (currentPosition - self.transform.position)).magnitude;
-
-		//float velocity = distance * acceleration;
 		float x = Mathf.SmoothDamp (transform.position.x, targetX, ref yVelocity, damping);
 		float y = Mathf.SmoothDamp (transform.position.y, targetY, ref xVelocity, damping);
 

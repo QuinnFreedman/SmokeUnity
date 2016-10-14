@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
@@ -8,10 +8,11 @@ public class CreateWorld : MonoBehaviour {
 
 	public int worldWidth = 100;
 	public int worldHeight = 100;
-	public int tileWidthPixels = 32;
-	public int tileHeightPixels = 32;
-	public float tileWidthUnits = 1.0f;
-	public float tileHeightUnits = 1.0f;
+	public int numberOfRooms = 10;
+	//public int tileWidthPixels = 32;
+	//public int tileHeightPixels = 32;
+	//public float tileWidthUnits = 1.0f;
+	//public float tileHeightUnits = 1.0f;
 	public int tileSheetWidth = 5;
 	public int tileSheetHeight = 2;
 
@@ -19,12 +20,29 @@ public class CreateWorld : MonoBehaviour {
 
 		Application.targetFrameRate = 60;
 
-		BuildMesh ();
+		var rooms = new List<Room> ();
+		int[,] dungeon = DungeonBuilder.BuildDungeon (worldWidth, worldHeight, numberOfRooms, rooms);
+		/*var debug = "";
+		for (int y = 0; y < dungeon.GetLength (0); y++) {
+			for (int x = 0; x < dungeon.GetLength (1); x++) {
+				debug += dungeon [y, x] + " ";
+			}
+			debug += "\n";
+		}
+		print(debug);*/
+
+		BuildMesh(dungeon);
+
+		float spawnX = rooms [0].x + (rooms [0].width / 2f);
+		float spawnY = rooms [0].y + (rooms [0].height / 2f);
+
+		GameObject.Find ("player").transform.position = new Vector3 (spawnX, spawnY, 0);
+		GameObject.Find ("CameraContainer").transform.position = new Vector3 (spawnX, spawnY, 0);
 	}
 
-	public void BuildMesh() {
+	public void BuildMesh(int[,] level) {
 		var meshFilter 	 = GetComponent<MeshFilter> ();
-		var meshRenderer = GetComponent<MeshRenderer> ();
+		//var meshRenderer = GetComponent<MeshRenderer> ();
 		var collider = GetComponent<PolygonCollider2D> ();
 
 		int numTiles = worldWidth * worldHeight;
@@ -67,14 +85,27 @@ public class CreateWorld : MonoBehaviour {
 		iVertCount = 0;
 		for (x = 0; x < worldWidth; x++) {
 			for (y = 0; y < worldHeight; y++) {
-				var tile = Random.Range (0, 2);
+				var tile = level[y,x];
 				int tileX, tileY;
 				if (tile == 0) {
 					tileX = 0;
-					tileY = 1;
+					tileY = 0;
+				} else if (tile == 1) {
+					if (Random.value < 0.5f) {
+						tileX = 4;
+						tileY = 0;
+					} else {
+						tileX = 0;
+						tileY = 1;
+					}
 				} else {
-					tileX = 3;
-					tileY = 1;
+					if (Random.value < 0.5f) {
+						tileX = 2;
+						tileY = 1;
+					} else {
+						tileX = 2;
+						tileY = 0;
+					}
 				}
 
 				UVArray [iVertCount + 0] = new Vector2 ((float)tileX / tileSheetWidth, (float)tileY / tileSheetHeight); //Top left of tile in atlas
@@ -84,7 +115,7 @@ public class CreateWorld : MonoBehaviour {
 				iVertCount += 4;
 
 
-				if (tile == 0) {
+				if (tile == 1) {
 					var path = new Vector2[4];
 					path [0] = new Vector2 (x, y);
 					path [1] = new Vector2 (x + 1, y);
