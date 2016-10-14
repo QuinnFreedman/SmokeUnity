@@ -3,7 +3,7 @@ using System.Collections;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
-[RequireComponent(typeof(MeshCollider))]
+[RequireComponent(typeof(PolygonCollider2D))]
 public class CreateWorld : MonoBehaviour {
 
 	public int worldWidth = 100;
@@ -19,62 +19,13 @@ public class CreateWorld : MonoBehaviour {
 
 		Application.targetFrameRate = 60;
 
-		/*
-		int numVerts = (worldWidth + 1) * (worldHeight + 1);
-		int numTiles = worldWidth * worldHeight;
-
-		Mesh mesh = new Mesh ();
-		mesh.subMeshCount = numTiles;
-		Vector3[] vertices 	= new Vector3[ numVerts ];
-		Vector3[] normals 	= new Vector3[ numVerts ];
-		Vector2[] uv 		= new Vector2[ numVerts ];
-
-		int x, y;
-		for (y = 0; y < worldHeight + 1; y++) {
-			for (x = 0; x < worldWidth + 1; x++) {
-				vertices [y * worldWidth + x] = new Vector3 (x * tileWidthUnits, y * tileHeightUnits, 0);
-				normals [y * worldWidth + x] = Vector3.forward;
-				uv [y * worldWidth + x] = new Vector2 (0, 0);
-			}
-		}
-
-		mesh.vertices = vertices;
-		mesh.normals = normals;
-		mesh.uv = uv;
-		meshRenderer.materials = new Material[numTiles];
-
-
-		for (y = 0; y < worldHeight; y++) {
-			for (x = 0; x < worldWidth; x++) {
-				var triangles = new int[6];
-				int indexOffset = (y * worldWidth + x) * 6;
-
-				triangles [0] = y * worldWidth + x + 			  0;
-				triangles [1] = y * worldWidth + x + worldWidth + 0;
-				triangles [2] = y * worldWidth + x + worldWidth + 1;
-
-				triangles [3] = y * worldWidth + x + 			  0;
-				triangles [5] = y * worldWidth + x + worldWidth + 1;
-				triangles [4] = y * worldWidth + x +			  1;
-
-				//print ("subMeshCount == " + mesh.subMeshCount + ", subMesh index == " + (y * worldWidth + x));
-				mesh.SetTriangles (triangles, y * worldWidth + x);
-				meshRenderer.materials [y * worldWidth + x] = materials [Random.Range(0, 1)];
-				print ("triangles " + x + "," + y);
-			}
-		}
-
-
-
-		meshFilter.mesh = mesh;*/
-
 		BuildMesh ();
 	}
 
 	public void BuildMesh() {
 		var meshFilter 	 = GetComponent<MeshFilter> ();
 		var meshRenderer = GetComponent<MeshRenderer> ();
-		var meshCollider = GetComponent<MeshCollider> ();
+		var collider = GetComponent<PolygonCollider2D> ();
 
 		int numTiles = worldWidth * worldHeight;
 		int numTriangles = numTiles * 6;
@@ -109,7 +60,6 @@ public class CreateWorld : MonoBehaviour {
 		}
 
 		Mesh mesh = new Mesh();
-		//mesh.MarkDynamic(); if you intend to change the vertices a lot, this will help.
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
 		meshFilter.mesh = mesh;
@@ -132,6 +82,17 @@ public class CreateWorld : MonoBehaviour {
 				UVArray [iVertCount + 2] = new Vector2 ((float)(tileX + 1) / tileSheetWidth, (float)(tileY + 1) / tileSheetHeight); //Bottom right of tile in atlas
 				UVArray [iVertCount + 3] = new Vector2 ((float)tileX / tileSheetWidth, (float)(tileY + 1) / tileSheetHeight); //Bottom left of tile in atlas
 				iVertCount += 4;
+
+
+				if (tile == 0) {
+					var path = new Vector2[4];
+					path [0] = new Vector2 (x, y);
+					path [1] = new Vector2 (x + 1, y);
+					path [2] = new Vector2 (x + 1, y + 1);
+					path [3] = new Vector2 (x, y + 1);
+					collider.pathCount += 1;
+					collider.SetPath (collider.pathCount - 1, path);
+				}
 			}
 		}
 

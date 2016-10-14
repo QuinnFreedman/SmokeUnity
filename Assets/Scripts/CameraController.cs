@@ -2,7 +2,6 @@
 
 public class CameraController : MonoBehaviour {
 
-	public Transform camera;
 	public Transform followTarget;
 	public float acceleration = 50f;
 	public float damping = 0.8f;
@@ -19,7 +18,7 @@ public class CameraController : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 		previousPosition = currentPosition;
 		currentPosition = followTarget.position;
 
@@ -28,12 +27,12 @@ public class CameraController : MonoBehaviour {
 
 		//Vector3 extrapolatedTarget = 
 
-		//float distance = ((Vector2) (currentPosition - camera.transform.position)).magnitude;
+		//float distance = ((Vector2) (currentPosition - self.transform.position)).magnitude;
 
 		//float velocity = distance * acceleration;
-		float x = Mathf.SmoothDamp (camera.position.x, targetX, ref yVelocity, damping);
-		float y = Mathf.SmoothDamp (camera.position.y, targetY, ref xVelocity, damping);
+		float x = Mathf.SmoothDamp (transform.position.x, targetX, ref yVelocity, damping);
+		float y = Mathf.SmoothDamp (transform.position.y, targetY, ref xVelocity, damping);
 
-		camera.position = new Vector3 (x, y, camera.position.z);
+		transform.position = new Vector3 (x, y, transform.position.z);
 	}
 }
