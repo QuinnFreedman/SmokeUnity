@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour {
 			anim.SetFloat ("MoveY", Crush (rb.velocity.y));
 		}
 
-		anim.SetBool ("PlayerMoving", rb.velocity.y != 0 || rb.velocity.x != 0);
+		anim.SetBool ("PlayerMoving", Mathf.Abs(rb.velocity.y) > 0.15 || Mathf.Abs(rb.velocity.x) > 0.15);
 
 		var velocityX = rb.velocity.x;
 		var velocityY = rb.velocity.y;
@@ -95,8 +95,8 @@ public class PlayerController : MonoBehaviour {
 	}*/
 
 	private float Crush(float x) {
-		return x < 0 ? -1 :
-			x > 0 ? 1 : 0;
+		return x < -0.15 ? -1 :
+			x > 0.15 ? 1 : 0;
 	}
 
 }
