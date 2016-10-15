@@ -50,37 +50,90 @@ public class CreateWorld : MonoBehaviour {
 		int numVerts = numTiles * 4;
 
 		Vector3[] vertices = new Vector3[numVerts];
+		int[] triangles = new int[numTriangles];
 		var UVArray = new Vector2[numVerts];
+		var vertIndecies = new int[2, worldHeight + 1, worldWidth + 1];
 
 		int x, y, iVertCount = 0;
 		for (x = 0; x < worldWidth; x++) {
 			for (y = 0; y < worldHeight; y++) {
-				vertices[iVertCount + 0] = new Vector3(x, y, 0);
-				vertices[iVertCount + 1] = new Vector3(x + 1, y, 0);
-				vertices[iVertCount + 2] = new Vector3(x + 1, y + 1, 0);
-				vertices[iVertCount + 3] = new Vector3(x, y + 1, 0);
+				int z = level [y, x] <= 1 ? 0 : 1;
+				vertices[iVertCount + 0] = new Vector3(x, y, z);
+				vertices[iVertCount + 1] = new Vector3(x + 1, y, z);
+				vertices[iVertCount + 2] = new Vector3(x + 1, y + 1, z);
+				vertices[iVertCount + 3] = new Vector3(x, y + 1, z);
+				vertIndecies[z, y, x] 	= iVertCount + 0;
+				vertIndecies[z, y, x + 1] = iVertCount + 1;
+				vertIndecies[z, y + 1, x + 1] = iVertCount + 2;
+				vertIndecies[z, y + 1, x] = iVertCount + 3;
 				iVertCount += 4;
 			}
 		}
 
-		int[] triangles = new int[numTriangles];
-
 		int iIndexCount = 0; iVertCount = 0;
 		for (int i = 0; i < numTiles; i++) {
+
 			triangles[iIndexCount + 0] += (iVertCount + 0);
 			triangles[iIndexCount + 1] += (iVertCount + 2);
 			triangles[iIndexCount + 2] += (iVertCount + 1);
 			triangles[iIndexCount + 3] += (iVertCount + 0);
 			triangles[iIndexCount + 4] += (iVertCount + 3);
 			triangles[iIndexCount + 5] += (iVertCount + 2);
-
+			
 			iVertCount += 4; iIndexCount += 6;
 		}
+
+		var triangles2Builder = new List<int> ();
+		for(y = 1; y < worldHeight; y++) {
+			for(x = 1; x < worldWidth; x++) {
+				if (level [y, x] <= 1 && level [y - 1, x] > 1) {
+					triangles2Builder.Add (vertIndecies [0, y, x]);
+					triangles2Builder.Add (vertIndecies [0, y, x + 1]);
+					triangles2Builder.Add (vertIndecies [1, y, x]);
+
+					triangles2Builder.Add (vertIndecies [0, y, x + 1]);
+					triangles2Builder.Add (vertIndecies [1, y, x + 1]);
+					triangles2Builder.Add (vertIndecies [1, y, x]);
+
+				} else if ((level [y, x] > 1 && level [y - 1, x] <= 1)) {
+					triangles2Builder.Add (vertIndecies [0, y, x]);
+					triangles2Builder.Add (vertIndecies [1, y, x]);
+					triangles2Builder.Add (vertIndecies [1, y, x + 1]);
+
+					triangles2Builder.Add (vertIndecies [0, y, x + 1]);
+					triangles2Builder.Add (vertIndecies [0, y, x]);
+					triangles2Builder.Add (vertIndecies [1, y, x + 1]);
+				}
+
+				if (level [y, x] <= 1 && level [y, x - 1] > 1) {
+					triangles2Builder.Add (vertIndecies [0, y + 1, x]);
+					triangles2Builder.Add (vertIndecies [0, y, x]);
+					triangles2Builder.Add (vertIndecies [1, y, x]);
+
+					triangles2Builder.Add (vertIndecies [0, y + 1, x]);
+					triangles2Builder.Add (vertIndecies [1, y, x]);
+					triangles2Builder.Add (vertIndecies [1, y + 1, x]);
+
+				} else if (level [y, x] > 1 && level [y, x - 1] <= 1) {
+					triangles2Builder.Add (vertIndecies [0, y, x]);
+					triangles2Builder.Add (vertIndecies [0, y + 1, x]);
+					triangles2Builder.Add (vertIndecies [1, y, x]);
+
+					triangles2Builder.Add (vertIndecies [0, y + 1, x]);
+					triangles2Builder.Add (vertIndecies [1, y + 1, x]);
+					triangles2Builder.Add (vertIndecies [1, y, x]);
+				}
+			}
+		}
+
+		var triangles2 = triangles2Builder.ToArray ();
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
 		meshFilter.mesh = mesh;
+		mesh.subMeshCount = 2;
+		mesh.SetTriangles (triangles2, 1);
 
 		iVertCount = 0;
 		for (x = 0; x < worldWidth; x++) {
