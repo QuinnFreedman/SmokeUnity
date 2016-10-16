@@ -16,6 +16,14 @@ public class CreateWorld : MonoBehaviour {
 	public int tileSheetWidth = 5;
 	public int tileSheetHeight = 2;
 
+	private List<KeyValuePair<Vector3, Vector3>> gizmos = new List<KeyValuePair<Vector3, Vector3>>();
+	void OnDrawGizmos() {
+		foreach(KeyValuePair<Vector3, Vector3> pair in gizmos) {
+			Gizmos.DrawLine (pair.Key, pair.Value);
+		}
+	}
+
+
 	void Start () {
 
 		Application.targetFrameRate = 60;
@@ -129,6 +137,22 @@ public class CreateWorld : MonoBehaviour {
 
 		for (int i = 0; i < numVerts; i++) {
 			normals [i] = new Vector3 (0, 0, -1);
+		}
+
+		for (y = 1; y < worldHeight - 1; y++) {
+			for (x = 1; x < worldWidth - 1; x++) {
+				if (level [y, x] > 1) {
+					if (level [y - 1, x] <= 1) {
+						if (level [y, x - 1] <= 1) {
+							normals [vertIndecies [0, y, x]] = new Vector3 (1, 1, -1);
+							gizmos.Add (new KeyValuePair<Vector3, Vector3> (new Vector3 (x, y, 0), new Vector3 (x + 1, y + 1, -1)));
+						} else {
+							normals [vertIndecies [0, y, x]] = new Vector3 (0, 1, -1);
+							gizmos.Add (new KeyValuePair<Vector3, Vector3> (new Vector3 (x, y, 0), new Vector3 (x, y + 1, -1)));
+						}
+					}
+				}
+			}
 		}
 
 		var triangles2 = triangles2Builder.ToArray ();
