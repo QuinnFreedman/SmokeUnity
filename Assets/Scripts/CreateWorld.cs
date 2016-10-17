@@ -61,9 +61,17 @@ public class CreateWorld : MonoBehaviour {
 		var triangles = new int[numTriangles];
 		var UVArray = new Vector2[numVerts];
 		var normals = new Vector3[numVerts];
-		var vertIndecies = new int[2, worldHeight + 1, worldWidth + 1];
-
-		int x, y, iVertCount = 0;
+		var vertIndecies = new List<int>[2, worldHeight + 1, worldWidth + 1];
+		int x, y;
+		int iVertCount = 0;
+		for (int z = 0; z < vertIndecies.GetLength (0); z++) {
+			for (y = 0; y < vertIndecies.GetLength (1); y++) {
+				for (x = 0; x < vertIndecies.GetLength (2); x++) {
+					vertIndecies [z, y, x] = new List<int> ();
+				}
+			}
+		}
+		 
 		for (x = 0; x < worldWidth; x++) {
 			for (y = 0; y < worldHeight; y++) {
 				int z = level [y, x] <= 1 ? 0 : 1;
@@ -71,10 +79,10 @@ public class CreateWorld : MonoBehaviour {
 				vertices[iVertCount + 1] = new Vector3(x + 1, y, z);
 				vertices[iVertCount + 2] = new Vector3(x + 1, y + 1, z);
 				vertices[iVertCount + 3] = new Vector3(x, y + 1, z);
-				vertIndecies[z, y, x] 	= iVertCount + 0;
-				vertIndecies[z, y, x + 1] = iVertCount + 1;
-				vertIndecies[z, y + 1, x + 1] = iVertCount + 2;
-				vertIndecies[z, y + 1, x] = iVertCount + 3;
+				vertIndecies[z, y, x].Add(iVertCount + 0);
+				vertIndecies[z, y, x + 1].Add(iVertCount + 1);
+				vertIndecies[z, y + 1, x + 1].Add(iVertCount + 2);
+				vertIndecies[z, y + 1, x].Add(iVertCount + 3);
 				iVertCount += 4;
 			}
 		}
@@ -96,41 +104,41 @@ public class CreateWorld : MonoBehaviour {
 		for(y = 1; y < worldHeight; y++) {
 			for(x = 1; x < worldWidth; x++) {
 				if (level [y, x] <= 1 && level [y - 1, x] > 1) {
-					triangles2Builder.Add (vertIndecies [0, y, x]);
-					triangles2Builder.Add (vertIndecies [0, y, x + 1]);
-					triangles2Builder.Add (vertIndecies [1, y, x]);
+					triangles2Builder.Add (vertIndecies [0, y, x][0]);
+					triangles2Builder.Add (vertIndecies [0, y, x + 1][0]);
+					triangles2Builder.Add (vertIndecies [1, y, x][0]);
 
-					triangles2Builder.Add (vertIndecies [0, y, x + 1]);
-					triangles2Builder.Add (vertIndecies [1, y, x + 1]);
-					triangles2Builder.Add (vertIndecies [1, y, x]);
+					triangles2Builder.Add (vertIndecies [0, y, x + 1][0]);
+					triangles2Builder.Add (vertIndecies [1, y, x + 1][0]);
+					triangles2Builder.Add (vertIndecies [1, y, x][0]);
 
 				} else if ((level [y, x] > 1 && level [y - 1, x] <= 1)) {
-					triangles2Builder.Add (vertIndecies [0, y, x]);
-					triangles2Builder.Add (vertIndecies [1, y, x]);
-					triangles2Builder.Add (vertIndecies [1, y, x + 1]);
+					triangles2Builder.Add (vertIndecies [0, y, x][0]);
+					triangles2Builder.Add (vertIndecies [1, y, x][0]);
+					triangles2Builder.Add (vertIndecies [1, y, x + 1][0]);
 
-					triangles2Builder.Add (vertIndecies [0, y, x + 1]);
-					triangles2Builder.Add (vertIndecies [0, y, x]);
-					triangles2Builder.Add (vertIndecies [1, y, x + 1]);
+					triangles2Builder.Add (vertIndecies [0, y, x + 1][0]);
+					triangles2Builder.Add (vertIndecies [0, y, x][0]);
+					triangles2Builder.Add (vertIndecies [1, y, x + 1][0]);
 				}
 
 				if (level [y, x] <= 1 && level [y, x - 1] > 1) {
-					triangles2Builder.Add (vertIndecies [0, y + 1, x]);
-					triangles2Builder.Add (vertIndecies [0, y, x]);
-					triangles2Builder.Add (vertIndecies [1, y, x]);
+					triangles2Builder.Add (vertIndecies [0, y + 1, x][0]);
+					triangles2Builder.Add (vertIndecies [0, y, x][0]);
+					triangles2Builder.Add (vertIndecies [1, y, x][0]);
 
-					triangles2Builder.Add (vertIndecies [0, y + 1, x]);
-					triangles2Builder.Add (vertIndecies [1, y, x]);
-					triangles2Builder.Add (vertIndecies [1, y + 1, x]);
+					triangles2Builder.Add (vertIndecies [0, y + 1, x][0]);
+					triangles2Builder.Add (vertIndecies [1, y, x][0]);
+					triangles2Builder.Add (vertIndecies [1, y + 1, x][0]);
 
 				} else if (level [y, x] > 1 && level [y, x - 1] <= 1) {
-					triangles2Builder.Add (vertIndecies [0, y, x]);
-					triangles2Builder.Add (vertIndecies [0, y + 1, x]);
-					triangles2Builder.Add (vertIndecies [1, y, x]);
+					triangles2Builder.Add (vertIndecies [0, y, x][0]);
+					triangles2Builder.Add (vertIndecies [0, y + 1, x][0]);
+					triangles2Builder.Add (vertIndecies [1, y, x][0]);
 
-					triangles2Builder.Add (vertIndecies [0, y + 1, x]);
-					triangles2Builder.Add (vertIndecies [1, y + 1, x]);
-					triangles2Builder.Add (vertIndecies [1, y, x]);
+					triangles2Builder.Add (vertIndecies [0, y + 1, x][0]);
+					triangles2Builder.Add (vertIndecies [1, y + 1, x][0]);
+					triangles2Builder.Add (vertIndecies [1, y, x][0]);
 				}
 			}
 		}
@@ -141,15 +149,49 @@ public class CreateWorld : MonoBehaviour {
 
 		for (y = 1; y < worldHeight - 1; y++) {
 			for (x = 1; x < worldWidth - 1; x++) {
-				if (level [y, x] > 1) {
-					if (level [y - 1, x] <= 1) {
-						if (level [y, x - 1] <= 1) {
-							normals [vertIndecies [0, y, x]] = new Vector3 (1, 1, -1);
-							gizmos.Add (new KeyValuePair<Vector3, Vector3> (new Vector3 (x, y, 0), new Vector3 (x + 1, y + 1, -1)));
-						} else {
-							normals [vertIndecies [0, y, x]] = new Vector3 (0, 1, -1);
-							gizmos.Add (new KeyValuePair<Vector3, Vector3> (new Vector3 (x, y, 0), new Vector3 (x, y + 1, -1)));
-						}
+				var upperLeft = level [y, x - 1] <= 1;
+				var upperRight = level [y, x] <= 1;
+				var lowerLeft = level [y - 1, x - 1] <= 1;
+				var lowerRight = level [y - 1, x] <= 1;
+
+				if (!(True (upperLeft, upperRight, lowerLeft, lowerRight) || False (upperLeft, upperRight, lowerLeft, lowerRight))) {
+
+					Vector3 normal = new Vector3 (0, 0, 0);
+					//print (upperLeft + " " + upperRight + "\n" + lowerLeft + " " + lowerRight);
+
+					if (True (upperRight, lowerRight) && False (upperLeft, lowerLeft)) {
+						//W
+						normal = new Vector3 (-1, 0, -1);
+					} else if (False (upperRight, lowerRight) && True (upperLeft, lowerLeft)) {
+						//E
+						normal = new Vector3 (1, 0, -1);
+					} else if (True (upperLeft, upperRight) && False (lowerLeft, lowerRight)) {
+						//S
+						normal = new Vector3 (0, -1, -1);
+					} else if (False (upperLeft, upperRight) && True (lowerLeft, lowerRight)) {
+						//N
+						normal = new Vector3 (0, 1, -1);
+					} else if (lowerRight && False (lowerLeft, upperLeft, upperRight) || True (upperRight, lowerLeft) && !upperLeft) {
+						//NW
+						normal = new Vector3 (-1, 1, -1);
+					} else if (lowerLeft && False (upperLeft, upperRight, lowerRight) || True (upperLeft, lowerRight) && !upperRight) {
+						//NE
+						normal = new Vector3 (1, 1, -1);
+					} else if (upperLeft && False (lowerLeft, upperRight, lowerRight) || True (upperRight, lowerLeft) && !lowerRight) {
+						//SE
+						normal = new Vector3 (1, -1, -1);
+					} else if (upperRight && False (lowerLeft, upperLeft, lowerRight) || True (upperLeft, lowerRight) && !lowerLeft) {
+						//SW
+						normal = new Vector3 (-1, -1, -1);
+					}
+
+					if (normal.z == 0) {
+						print ("something went wrong");
+					}
+					//print (vertIndecies [0, y, x].Count);
+					foreach (var index in vertIndecies[0, y, x]) {
+						normals [index] = normal;
+						gizmos.Add (new KeyValuePair<Vector3, Vector3> (new Vector3 (x, y, 0), new Vector3 (x, y, 0) + normal));
 					}
 				}
 			}
@@ -213,6 +255,20 @@ public class CreateWorld : MonoBehaviour {
 		meshFilter.mesh.uv = UVArray;
 	}
 
+	private static bool True(params bool[] args) {
+		foreach (var arg in args) {
+			if (!arg)
+				return false;
+		}
+		return true;
+	}
 
+	private static bool False(params bool[] args) {
+		foreach (var arg in args) {
+			if (arg)
+				return false;
+		}
+		return true;
+	}
 
 }

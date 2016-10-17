@@ -1,3 +1,4 @@
 *.exe
 *.app
 Temp/
+Library/ShaderCache/
