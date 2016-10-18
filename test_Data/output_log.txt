@@ -16,11 +16,18 @@ Platform assembly: C:\Users\Quinn Freedman\Documents\SmokeUnity\test_Data\Manage
 Loading C:\Users\Quinn Freedman\Documents\SmokeUnity\test_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
 Platform assembly: C:\Users\Quinn Freedman\Documents\SmokeUnity\test_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
 Loading C:\Users\Quinn Freedman\Documents\SmokeUnity\test_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
-- Completed reload, in  0.111 seconds
+- Completed reload, in  0.108 seconds
 Platform assembly: C:\Users\Quinn Freedman\Documents\SmokeUnity\test_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\Quinn Freedman\Documents\SmokeUnity\test_Data\Managed\System.dll (this message is harmless)
-desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
+desktop: 1920x1080 60Hz; virtual: 3840x1080 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
 <RI> Initialized touch support.
-UnloadTime: 2.572233 ms
+UnloadTime: 2.541838 ms
+random seed is 0
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+Setting up 2 worker threads for Enlighten.
+  Thread -> id: 432c -> priority: 1 
+  Thread -> id: 7ae4 -> priority: 1 

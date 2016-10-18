@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(PolygonCollider2D))]
+[ExecuteInEditMode]
 public class CreateWorld : MonoBehaviour {
 
 	public int worldWidth = 100;
@@ -15,18 +17,21 @@ public class CreateWorld : MonoBehaviour {
 	//public float tileHeightUnits = 1.0f;
 	public int tileSheetWidth = 5;
 	public int tileSheetHeight = 2;
+	public float edgeNormalsZ = -1f;
 
 	private List<KeyValuePair<Vector3, Vector3>> gizmos = new List<KeyValuePair<Vector3, Vector3>>();
 	void OnDrawGizmos() {
+		Gizmos.color = Color.yellow;
 		foreach(KeyValuePair<Vector3, Vector3> pair in gizmos) {
 			Gizmos.DrawLine (pair.Key, pair.Value);
 		}
 	}
 
-
 	void Start () {
 
-		Application.targetFrameRate = 60;
+        int seed = 0;//DateTime.Now.GetHashCode();
+        UnityEngine.Random.InitState(seed);
+        Debug.Log("random seed is " + seed);
 
 		var rooms = new List<Room> ();
 		int[,] dungeon = DungeonBuilder.BuildDungeon (worldWidth, worldHeight, numberOfRooms, rooms);
@@ -155,34 +160,35 @@ public class CreateWorld : MonoBehaviour {
 				var lowerRight = level [y - 1, x] <= 1;
 
 				if (!(True (upperLeft, upperRight, lowerLeft, lowerRight) || False (upperLeft, upperRight, lowerLeft, lowerRight))) {
-
+					
 					Vector3 normal = new Vector3 (0, 0, 0);
 					//print (upperLeft + " " + upperRight + "\n" + lowerLeft + " " + lowerRight);
+					float z = edgeNormalsZ;
 
 					if (True (upperRight, lowerRight) && False (upperLeft, lowerLeft)) {
 						//W
-						normal = new Vector3 (-1, 0, -1);
+						normal = new Vector3 (-1, 0, z);
 					} else if (False (upperRight, lowerRight) && True (upperLeft, lowerLeft)) {
 						//E
-						normal = new Vector3 (1, 0, -1);
+						normal = new Vector3 (1, 0, z);
 					} else if (True (upperLeft, upperRight) && False (lowerLeft, lowerRight)) {
 						//S
-						normal = new Vector3 (0, -1, -1);
+						normal = new Vector3 (0, -1, z);
 					} else if (False (upperLeft, upperRight) && True (lowerLeft, lowerRight)) {
 						//N
-						normal = new Vector3 (0, 1, -1);
+						normal = new Vector3 (0, 1, z);
 					} else if (lowerRight && False (lowerLeft, upperLeft, upperRight) || True (upperRight, lowerLeft) && !upperLeft) {
 						//NW
-						normal = new Vector3 (-1, 1, -1);
+						normal = new Vector3 (-1, 1, z);
 					} else if (lowerLeft && False (upperLeft, upperRight, lowerRight) || True (upperLeft, lowerRight) && !upperRight) {
 						//NE
-						normal = new Vector3 (1, 1, -1);
+						normal = new Vector3 (1, 1, z);
 					} else if (upperLeft && False (lowerLeft, upperRight, lowerRight) || True (upperRight, lowerLeft) && !lowerRight) {
 						//SE
-						normal = new Vector3 (1, -1, -1);
+						normal = new Vector3 (1, -1, z);
 					} else if (upperRight && False (lowerLeft, upperLeft, lowerRight) || True (upperLeft, lowerRight) && !lowerLeft) {
 						//SW
-						normal = new Vector3 (-1, -1, -1);
+						normal = new Vector3 (-1, -1, z);
 					}
 
 					if (normal.z == 0) {
@@ -197,16 +203,17 @@ public class CreateWorld : MonoBehaviour {
 			}
 		}
 
-		var triangles2 = triangles2Builder.ToArray ();
+		var triangles2 = triangles2Builder.ToArray();
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
-		meshFilter.mesh = mesh;
+		meshFilter.sharedMesh = mesh;
 		mesh.subMeshCount = 2;
 		mesh.SetTriangles (triangles2, 1);
 		mesh.normals = normals;
 
+		collider.pathCount = 0;
 		iVertCount = 0;
 		for (x = 0; x < worldWidth; x++) {
 			for (y = 0; y < worldHeight; y++) {
@@ -216,7 +223,7 @@ public class CreateWorld : MonoBehaviour {
 					tileX = 0;
 					tileY = 0;
 				} else if (tile == 1) {
-					if (Random.value < 0.5f) {
+					if (UnityEngine.Random.value < 0.5f) {
 						tileX = 4;
 						tileY = 0;
 					} else {
@@ -224,7 +231,7 @@ public class CreateWorld : MonoBehaviour {
 						tileY = 1;
 					}
 				} else {
-					if (Random.value < 0.5f) {
+					if (UnityEngine.Random.value < 0.5f) {
 						tileX = 2;
 						tileY = 1;
 					} else {
@@ -252,7 +259,7 @@ public class CreateWorld : MonoBehaviour {
 			}
 		}
 
-		meshFilter.mesh.uv = UVArray;
+		meshFilter.sharedMesh.uv = UVArray;
 	}
 
 	private static bool True(params bool[] args) {
