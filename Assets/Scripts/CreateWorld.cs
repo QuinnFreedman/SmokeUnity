@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(PolygonCollider2D))]
 [ExecuteInEditMode]
 public class CreateWorld : MonoBehaviour {
+
+	public static int[,] level;
 
 	public int worldWidth = 100;
 	public int worldHeight = 100;
@@ -20,7 +21,7 @@ public class CreateWorld : MonoBehaviour {
 	public float edgeNormalsZ = -1f;
 
 	private List<KeyValuePair<Vector3, Vector3>> gizmos = new List<KeyValuePair<Vector3, Vector3>>();
-	void OnDrawGizmos() {
+	void OnDrawGizmosSelected() {
 		Gizmos.color = Color.yellow;
 		foreach(KeyValuePair<Vector3, Vector3> pair in gizmos) {
 			Gizmos.DrawLine (pair.Key, pair.Value);
@@ -34,23 +35,17 @@ public class CreateWorld : MonoBehaviour {
         Debug.Log("random seed is " + seed);
 
 		var rooms = new List<Room> ();
-		int[,] dungeon = DungeonBuilder.BuildDungeon (worldWidth, worldHeight, numberOfRooms, rooms);
-		/*var debug = "";
-		for (int y = 0; y < dungeon.GetLength (0); y++) {
-			for (int x = 0; x < dungeon.GetLength (1); x++) {
-				debug += dungeon [y, x] + " ";
-			}
-			debug += "\n";
-		}
-		print(debug);*/
+		level = DungeonBuilder.BuildDungeon (worldWidth, worldHeight, numberOfRooms, rooms);
 
-		BuildMesh(dungeon);
+		BuildMesh(level);
+		AStar.InitGraph(level);
 
 		float spawnX = rooms [0].x + (rooms [0].width / 2f);
 		float spawnY = rooms [0].y + (rooms [0].height / 2f);
 
 		GameObject.Find ("player").transform.position = new Vector3 (spawnX, spawnY, 0);
 		GameObject.Find ("CameraContainer").transform.position = new Vector3 (spawnX, spawnY, 0);
+
 	}
 
 	public void BuildMesh(int[,] level) {

@@ -5,16 +5,38 @@ using System;
 public class AStar
 {
 
-    static List<Point> GetPath(Point startpoint, Point endpoint, Node[,] nodes, int maxIterations)
+    private static Node[,] graph = null;
+
+    public static void InitGraph(int[,] level)
+    {
+        if (level == null)
+        {
+            Debug.LogError("Pathfinding graph can't be initialized with a null level");
+            return;
+        }
+        graph = new Node[level.GetLength(0), level.GetLength(1)];
+        for (int y = 0; y < level.GetLength(0); y++)
+        {
+            for (int x = 0; x < level.GetLength(1); x++)
+            {
+                graph[y, x] = new Node(x, y, level[y, x] <= 1);
+            }
+        }
+
+    }
+
+    static List<Point> GetPath(Point startpoint, Point endpoint, int maxIterations)
+    {
+        if (graph == null)
+        {
+            InitGraph(CreateWorld.level);
+        }
+        return GetPath(startpoint, endpoint, maxIterations, graph);
+    }
+
+    static List<Point> GetPath(Point startpoint, Point endpoint, int maxIterations, Node[,] nodes)
     {
         var path = new List<Node>();
-        // Node[,] nodes = new Node[collision.GetLength(0),collision.GetLength(1)];
-        // for(int y = 0; y < collision.GetLength(0); y++){
-        // 	for(int x = 0; x < collision.GetLength(1); x++){
-        // 		nodes[y,x] = new Node(x,y,!collision[y,x]);
-        // 	}
-        // }
-
         var openList = new List<Node>();
         var closedList = new List<Node>();
 
@@ -155,7 +177,7 @@ public class AStar
         return d;
     }
 
-    private class Node : Point
+    internal class Node : Point
     {
         //float gf; //float move cost
         //float ff; //float f
@@ -165,11 +187,11 @@ public class AStar
         public bool isPassable;
         public Node parent;
 
-        Node(int x, int y, bool passable) : base(x, y)
+        public Node(int x, int y, bool passable) : base(x, y)
         {
             isPassable = passable;
         }
 
-        Node(int x, int y) : base(x, y) { }
+        public Node(int x, int y) : base(x, y) { }
     }
 }

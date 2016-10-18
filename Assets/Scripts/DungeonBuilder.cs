@@ -132,23 +132,6 @@ class DungeonBuilder {
 	//Pathing
 	//****************************************************************************************
 
-
-	private class Node : Point {
-		public int h;//heuristic
-		public int g;//movement cost
-		public int f;//g+h
-		public bool isPassable;
-		public Node parent;
-		
-		public Node(int x, int y, bool passable) : base(x, y) {
-			isPassable = passable;
-		}
-		
-		public Node(int x, int y) : base(x, y) {
-			isPassable = false;
-		}
-	}
-
 	private static bool contains(List<Point> roomWalls, Point p2) {
 		foreach (Point p1 in roomWalls) {
 			if(p1.x == p2.x && p1.y == p2.y){
@@ -165,17 +148,17 @@ class DungeonBuilder {
 
 	private static void SetPaths(int[,] walls, List<Room> rooms, bool outlinePaths) {
 		
-		var openList = new List<Node> ();
-		var closedList = new List<Node> ();
-		var paths = new List<List<Node>> ();
+		var openList = new List<AStar.Node> ();
+		var closedList = new List<AStar.Node> ();
+		var paths = new List<List<AStar.Node>> ();
 		
-		Node[,] nodes = new Node[walls.GetLength (0), walls.GetLength (1)];
+		AStar.Node[,] nodes = new AStar.Node[walls.GetLength (0), walls.GetLength (1)];
 		for (int y = 0; y < walls.GetLength (0); y++) {
 			for (int x = 0; x < walls.GetLength (1); x++) {
 				if (walls [y, x] == 0) {
-					nodes [y, x] = new Node (x, y, true);
+					nodes [y, x] = new AStar.Node (x, y, true);
 				} else {
-					nodes [y, x] = new Node (x, y, false);
+					nodes [y, x] = new AStar.Node (x, y, false);
 				}
 			}
 		}
@@ -271,10 +254,10 @@ class DungeonBuilder {
 						}
 						
 						//loop through openList - find lowest f
-						Node lowestF = null;
+						AStar.Node lowestF = null;
 						
 						if (openList.Count > 0) {
-							foreach (Node test in openList) {
+							foreach (AStar.Node test in openList) {
 								if (lowestF == null || test.f < lowestF.f || (test.f == lowestF.f && walls [test.y, test.x] == 3)) {
 									//prefer nodes that have already been used, if two are equal, to reduce parallel paths
 									//TODO /don't/ change to random chance with preference toward used nodes, to allow some wide pathing
@@ -304,8 +287,8 @@ class DungeonBuilder {
 					//Trace back
 					//TODO save paths to arraylist, and use last pos in list instead of currentTile
 					if (done == true) {
-						paths.Add (new List<Node> ());
-						Node currentTile = nodes [endpoint.y, endpoint.x].parent;
+						paths.Add (new List<AStar.Node> ());
+						AStar.Node currentTile = nodes [endpoint.y, endpoint.x].parent;
 						if (currentTile != null) {
 							while (currentTile.parent != null) {
 								paths [paths.Count - 1].Add (currentTile);
@@ -319,8 +302,8 @@ class DungeonBuilder {
 		}
 		if (outlinePaths) {
 			//fill in edges of painted area with walls
-			foreach (List<Node> path in paths) {
-				foreach (Node node in path) {
+			foreach (List<AStar.Node> path in paths) {
+				foreach (AStar.Node node in path) {
 					for (int h = 0; h < 8; h++) {
 						int localX = node.x;
 						int localY = node.y;
