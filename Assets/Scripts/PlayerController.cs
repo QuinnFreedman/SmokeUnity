@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
 //[RequireComponent(typeof(Animator))]
@@ -40,19 +39,19 @@ public class PlayerController : MonoBehaviour {
 
 		anim.SetBool ("PlayerMoving", Mathf.Abs(rb.velocity.y) > 0.15 || Mathf.Abs(rb.velocity.x) > 0.15);
 
-		var velocityX = rb.velocity.x;
-		var velocityY = rb.velocity.y;
+		var velocity = new Vector2(rb.velocity.x, rb.velocity.y);
 
-		var dx = Input.GetAxisRaw ("Horizontal") * acceleration;
-		var dy = Input.GetAxisRaw ("Vertical") * acceleration;
+		var input = new Vector2(Input.GetAxisRaw ("Horizontal"), Input.GetAxisRaw ("Vertical")).normalized * acceleration;
 
-		var dampX = Mathf.Abs (friction) > Mathf.Abs (velocityX) ? -velocityX : -Mathf.Sign (velocityX) * friction;
-		var dampY = Mathf.Abs (friction) > Mathf.Abs (velocityY) ? -velocityY : -Mathf.Sign (velocityY) * friction;
+		var dampX = Mathf.Abs (friction) > Mathf.Abs (velocity.x) ? -velocity.x : -Mathf.Sign (velocity.x) * friction;
+		var dampY = Mathf.Abs (friction) > Mathf.Abs (velocity.y) ? -velocity.y : -Mathf.Sign (velocity.y) * friction;
 
-		velocityX = Mathf.Clamp (velocityX + dx + dampX, -maxMoveSpeed, maxMoveSpeed);
-		velocityY = Mathf.Clamp (velocityY + dy + dampY, -maxMoveSpeed, maxMoveSpeed);
+		velocity = new Vector2 (
+				Mathf.Clamp (velocity.x + input.x + dampX, -maxMoveSpeed, maxMoveSpeed),
+				Mathf.Clamp (velocity.y + input.y + dampY, -maxMoveSpeed, maxMoveSpeed));
+		//velocity.Normalize();
 
-		rb.velocity = new Vector2 (velocityX, velocityY);
+		rb.velocity = new Vector2 (velocity.x, velocity.y);
 	}
 	
 	// Update is called once per frame
