@@ -45,7 +45,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\AStar.cs" />
+     <Compile Include="Assets\Scripts\AStarPathfinding\MyPathNode.cs" />
+     <Compile Include="Assets\Scripts\AStarPathfinding\PriorityQueue.cs" />
+     <Compile Include="Assets\Scripts\AStarPathfinding\SpatialAStar.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\CharacterController.cs" />
      <Compile Include="Assets\Scripts\CreateWorld.cs" />

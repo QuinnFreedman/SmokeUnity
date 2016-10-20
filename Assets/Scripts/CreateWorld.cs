@@ -30,15 +30,26 @@ public class CreateWorld : MonoBehaviour {
 
 	void Start () {
 
-        int seed = 0;//DateTime.Now.GetHashCode();
+        int seed = 1;//DateTime.Now.GetHashCode();
         UnityEngine.Random.InitState(seed);
         Debug.Log("random seed is " + seed);
 
+		//procedurally build dungeon
 		var rooms = new List<Room> ();
 		level = DungeonBuilder.BuildDungeon (worldWidth, worldHeight, numberOfRooms, rooms);
 
+		//create 3d mesh from dungeon map
 		BuildMesh(level);
-		AStar.InitGraph(level);
+
+		//create nav grid from dungeon map
+		var grid = new GridPathNode[level.GetLength(1), level.GetLength(0)];
+		for (int y = 0; y < level.GetLength(0); y++) {
+			for (int x = 0; x < level.GetLength(1); x++) {
+				grid[x,y] = new GridPathNode(x, y, level[y,x] <= 1);
+			}
+		}
+		NPCController.aStar = new AStar.SpatialAStar<GridPathNode, System.Object>(grid);
+		//AStar.InitGraph(level);
 
 		float spawnX = rooms [0].x + (rooms [0].width / 2f);
 		float spawnY = rooms [0].y + (rooms [0].height / 2f);

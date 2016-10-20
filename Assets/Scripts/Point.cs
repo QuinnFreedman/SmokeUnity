@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 class Point : IEquatable<Point> {
 	public int x, y;
@@ -8,7 +9,7 @@ class Point : IEquatable<Point> {
 		this.y = y;
 	}
 
-	public override bool Equals(Object other) {
+	public override bool Equals(object other) {
 		if (other == null || GetType () != other.GetType ())
 			return false;
 
@@ -17,11 +18,15 @@ class Point : IEquatable<Point> {
 	}
 
 	public bool Equals(Point other) {
-		return Equals ((Object) other);
+		return Equals ((object) other);
 	}
 
 	public override int GetHashCode () {
 		return x ^ y;
+	}
+
+	public static Point FromVector2(Vector2 v) {
+		return new Point((int) Mathf.Floor(v.x), (int) Mathf.Floor(v.y));
 	}
 }
 
