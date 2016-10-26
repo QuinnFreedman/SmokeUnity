@@ -1,7 +1,8 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2008
-
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{C8597224-864B-A542-CDCA-77EFCA64FE79}") = "SmokeUnity", "Assembly-CSharp.csproj", "{D15E7E07-7C52-D40F-65AB-01687D206348}"
+EndProject
+Project("{C8597224-864B-A542-CDCA-77EFCA64FE79}") = "SmokeUnity", "Assembly-CSharp-Editor.csproj", "{D57B4C3D-7CE8-9F6A-76A2-5EF6ED461DB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,9 +14,10 @@ Global
 		{D15E7E07-7C52-D40F-65AB-01687D206348}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D15E7E07-7C52-D40F-65AB-01687D206348}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D15E7E07-7C52-D40F-65AB-01687D206348}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
+		{D57B4C3D-7CE8-9F6A-76A2-5EF6ED461DB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D57B4C3D-7CE8-9F6A-76A2-5EF6ED461DB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D57B4C3D-7CE8-9F6A-76A2-5EF6ED461DB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D57B4C3D-7CE8-9F6A-76A2-5EF6ED461DB9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
