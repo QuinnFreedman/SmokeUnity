@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -57,6 +58,7 @@ public class CreateWorld : MonoBehaviour {
 		GameObject.Find ("player").transform.position = new Vector3 (spawnX, spawnY, 0);
 		GameObject.Find ("CameraContainer").transform.position = new Vector3 (spawnX, spawnY, 0);
 
+		UnityEngine.Random.InitState(DateTime.Now.GetHashCode());
 	}
 
 	public void BuildMesh(int[,] level) {
