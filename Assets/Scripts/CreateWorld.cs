@@ -30,10 +30,8 @@ public class CreateWorld : MonoBehaviour {
 	}
 
 	void Start () {
-
-        int seed = 1;//DateTime.Now.GetHashCode();
-        UnityEngine.Random.InitState(seed);
-        Debug.Log("random seed is " + seed);
+        UnityEngine.Random.InitState(GlobalScript.singleton.dungeonSeed);
+        Debug.Log("random seed is " + GlobalScript.singleton.dungeonSeed);
 
 		//procedurally build dungeon
 		var rooms = new List<Room> ();
@@ -50,13 +48,13 @@ public class CreateWorld : MonoBehaviour {
 			}
 		}
 		NPCController.aStar = new AStar.SpatialAStar<GridPathNode, System.Object>(grid);
-		//AStar.InitGraph(level);
 
 		float spawnX = rooms [0].x + (rooms [0].width / 2f);
 		float spawnY = rooms [0].y + (rooms [0].height / 2f);
 
-		GameObject.Find ("player").transform.position = new Vector3 (spawnX, spawnY, 0);
-		GameObject.Find ("CameraContainer").transform.position = new Vector3 (spawnX, spawnY, 0);
+		var playerCharacter = GameObject.Find("PlayerCharacter");
+		playerCharacter.transform.position = new Vector3 (spawnX, spawnY, playerCharacter.transform.position.z);
+		GameObject.Find("CameraContainer").transform.position = new Vector3 (spawnX, spawnY, 0);
 
 		UnityEngine.Random.InitState(DateTime.Now.GetHashCode());
 	}

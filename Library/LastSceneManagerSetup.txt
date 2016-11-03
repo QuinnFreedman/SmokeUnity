@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scennes/debug.unity
+- path: Assets/Scennes/Dungeon.unity
   isLoaded: 1
   isActive: 1

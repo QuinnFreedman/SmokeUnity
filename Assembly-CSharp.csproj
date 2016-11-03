@@ -53,15 +53,20 @@
      <Compile Include="Assets\Scripts\AStarPathfinding\SpatialAStar.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\CharacterController.cs" />
+     <Compile Include="Assets\Scripts\CombatController.cs" />
+     <Compile Include="Assets\Scripts\CombatInputHandler.cs" />
      <Compile Include="Assets\Scripts\CreateWorld.cs" />
      <Compile Include="Assets\Scripts\DungeonBuilder.cs" />
-     <Compile Include="Assets\Scripts\Maybe.cs" />
+     <Compile Include="Assets\Scripts\GlobalScript.cs" />
      <Compile Include="Assets\Scripts\NPCController.cs" />
-     <Compile Include="Assets\Scripts\NavMesh.cs" />
      <Compile Include="Assets\Scripts\PlayerInputHandler.cs" />
+     <Compile Include="Assets\Scripts\PlayerVariables.cs" />
      <Compile Include="Assets\Scripts\Point.cs" />
      <Compile Include="Assets\Scripts\Room.cs" />
-     <Compile Include="Assets\Scripts\Vecor2Extension.cs" />
+     <Compile Include="Assets\Scripts\Util\Maybe.cs" />
+     <Compile Include="Assets\Scripts\Util\MonoBehaviourExtension.cs" />
+     <Compile Include="Assets\Scripts\Util\Util.cs" />
+     <Compile Include="Assets\Scripts\Util\Vecor2Extension.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

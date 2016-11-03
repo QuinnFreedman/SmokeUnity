@@ -27,7 +27,7 @@ public class NPCController : MonoBehaviour {
 	}
 
 	void Start () {
-		target = GameObject.Find("player").transform;
+		target = GameObject.Find("PlayerCharacter").transform;
 		controller = GetComponent<CharacterController>();
 		if (aStar == null) {
 			//TODO 
@@ -43,11 +43,11 @@ public class NPCController : MonoBehaviour {
 	LinkedList<GridPathNode> path = null;
 	void FixedUpdate () {
 		Vector2 moveDirection = Vector2.zero;
-
+		
 		//distance to target
-		float distance = Vector2.Distance(target.transform.position, transform.position);
+		float distance = Vector2.Distance(target.position, transform.position);
 		//direction to target
-		Vector3 directionToTarget = Towards(target.transform.position);//(target.transform.position - transform.position).normalized;
+		Vector3 directionToTarget = Towards(target.position);//(target.position - transform.position).normalized;
 		//racast toward target
 		RaycastHit2D hitinfo = Physics2D.Raycast(transform.position, directionToTarget, distance, 1 << LayerMask.NameToLayer("LevelGeometry"));
 		if (mode == Mode.FOLLOW) {
@@ -67,13 +67,13 @@ public class NPCController : MonoBehaviour {
 				if (hitinfo) {
 					//no line of sight to target
 					Debug.DrawRay(transform.position, directionToTarget, Color.red, 0.5f);
-					var _targetPosition = Point.FromVector2(target.transform.position);
+					var _targetPosition = Point.FromVector2(target.position);
 					var _selfPosition = Point.FromVector2(transform.position);
 					if (!_targetPosition.Equals(targetPosition) || !_selfPosition.Equals(selfPosition) || path == null) {
 						targetPosition = _targetPosition;
 						selfPosition = _selfPosition;
 						try {
-							path = aStar.Search(transform.position, target.transform.position, null);
+							path = aStar.Search(transform.position, target.position, null);
 							//path = AStar.GetPath(_selfPosition, _targetPosition, 200);
 						} catch (Exception e) {
 							Debug.LogError("Error in AStar: "+e);
@@ -116,13 +116,9 @@ public class NPCController : MonoBehaviour {
 						Vector2 directionToIdleTarget;
 						float vectorLength;
 						do {
-							directionToIdleTarget = Vector2Extension.Random();
+							directionToIdleTarget = Vector2Utils.Random();
 							vectorLength = UnityEngine.Random.Range(roamDistance/2, roamDistance);
 							idleTarget = Maybe<Vector2>.SOME((Vector2) transform.position + directionToIdleTarget * vectorLength);
-							// idleTarget = Maybe<Vector2>.SOME(new Vector2(
-							// 		transform.position.x + UnityEngine.Random.Range(-roamDistance, roamDistance),
-							// 		transform.position.y + UnityEngine.Random.Range(-roamDistance, roamDistance)));
-							// directionToIdleTarget = Towards(((Maybe<Vector2>.Some) idleTarget).Value);
 						} while (Physics2D.Raycast(transform.position, directionToIdleTarget, vectorLength,
 								1 << LayerMask.NameToLayer("LevelGeometry")).collider != null);
 						Debug.DrawLine(transform.position, ((Maybe<Vector2>.Some) idleTarget).Value, Color.white, 1.5f);
@@ -154,11 +150,11 @@ public class NPCController : MonoBehaviour {
 		Gizmos.DrawSphere(GetComponent<Transform>().position + Vector3.up * 0.7f, 0.2f);
 	}
 
-	Vector2 Towards(Vector2 toward) {
-		return (toward - (Vector2) transform.position).normalized;
-	}
-
 	bool AreClose(Vector2 a, Vector2 b, float maxDistance) {
 		return Mathf.Abs(a.x - b.x) <= maxDistance && Mathf.Abs(a.y - b.y) <= maxDistance;
+	}
+
+	private Vector2 Towards(Vector2 vec) {
+		return ((Vector2) transform.position).Towards(vec);
 	}
 }
